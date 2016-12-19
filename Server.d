@@ -39,13 +39,13 @@ void main(string[] args)
 static class Handler : Thread
 {
 private:
-    auto buffer = new ubyte[128];
+    auto buffer = new ubyte[256];
 
     //Thread method
     void run()
     {
         //Buffer only for processing name
-        auto nameBuffer = new ubyte[128];
+        auto nameBuffer = new ubyte[256];
         client.receive(nameBuffer);
         Thread.name = processBuffer(nameBuffer);
 
@@ -65,7 +65,9 @@ private:
             //If the client disconnects, break and destroy
             if(recv == -1 || recv == 0)
             {
-                writefln("%s has left the server.", Thread.name);
+                auto msg = format("%s has left the server.", Thread.name);
+                eh.echo(Thread.name, msg);
+                writeln(msg);
                 break;
             }
             else
@@ -146,7 +148,7 @@ public:
     }
 
 private:
-    auto buffer = new ubyte[128];
+    auto buffer = new ubyte[256];
 
     string processBuffer(ubyte[] buffer)
     {

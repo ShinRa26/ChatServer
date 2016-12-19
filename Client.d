@@ -31,7 +31,7 @@ void main(string[] args)
         //Main loop
         while(true)
         {
-            //writef("[%s]: ", name);
+            write("~#: ");
             auto s = readln();
             client.send(s);
         }
