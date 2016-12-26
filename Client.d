@@ -1,9 +1,12 @@
+module Client;
+
 import std.stdio, std.string, std.socket, core.thread, std.concurrency;
+import ClientGUI, gtk.Main;
 
 static ushort port = 9000;
 static string ip = "127.0.0.1";
 Socket client;
-static auto buffer = new ubyte[128];
+static auto buffer = new ubyte[65535];
 
 void main(string[] args)
 {
