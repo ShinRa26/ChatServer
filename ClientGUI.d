@@ -86,10 +86,58 @@ private:
     }
 }
 
+
+
+class NameWindow
+{
+    import gtk.Window, gtk.Entry, gtk.Button, gtk.Label;
+
+public:
+    string text;
+
+    this()
+    {
+        frame = new Window("Enter Name");
+        frame.setDefaultSize(300,100);
+
+        l = new Label("Enter Chat Name:");
+        
+        e = new Entry();
+
+        b = new Button("Submit");
+        b.addOnButtonRelease(&press);
+
+        box = new Box(Orientation.VERTICAL, 10);
+        box.packStart(l, false, false, 5);
+        box.packStart(e, false, false, 5);
+        box.packStart(b, false, false, 5);
+
+        frame.add(box);
+        frame.showAll();
+    }
+
+    void getEntry(){ this.text = e.getText();}
+
+    bool press(Event e, Widget w)
+    {
+        getEntry();
+        frame.destroy();
+        return true;
+    }
+
+private:
+    Window frame;
+    Label l;
+    Entry e;
+    Button b;
+    Box box;
+}
+
 void main(string[] args)
 {
+    import std.stdio;
     Main.init(args);
-    auto c = new ClientGUI();
-    //c.getBuffer();
+    auto n = new NameWindow();
+    //auto c = new ClientGUI();
     Main.run();
 }
