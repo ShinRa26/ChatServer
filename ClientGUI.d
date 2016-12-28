@@ -4,6 +4,7 @@ import std.string;
 import gtk.Main, gtk.MainWindow, gtk.TextView, gtk.ScrolledWindow, gtk.Box;
 import gdk.Event, gdk.RGBA, gdk.Color, gtk.Widget, gtk.TextBuffer;
 
+/* Main class for displaying the chat program gui */
 class ClientGUI
 {
 public:
@@ -33,6 +34,7 @@ private:
     Box box;
     ScrolledWindow scroll, scroll2;
 
+    //Helper to set up the display
     void setupChatRoomWidgets()
     {
         chatDisplay = new TextView();
@@ -41,10 +43,10 @@ private:
         chatDisplay.overrideColor(GtkStateFlags.NORMAL, new RGBA(65535,65535,65535,1));
 
         chatEntry = new ChatTextBox(chatDisplay);
-            
     }
 }
 
+//Custom TextView for entering text and clearing buffer after message is sent
 class ChatTextBox : TextView
 {
     import gtk.TextIter;
@@ -87,7 +89,7 @@ private:
 }
 
 
-
+/* Class for obtaining the user's name for the chat program */
 class NameWindow
 {
     import gtk.Window, gtk.Entry, gtk.Button, gtk.Label;
@@ -116,13 +118,47 @@ public:
         frame.showAll();
     }
 
-    void getEntry(){ this.text = e.getText();}
+    //Gets the name from the text box and checks validity
+    bool getEntry()
+    { 
+        bool valid = false;
+        this.text = e.getText();
 
+        import std.stdio;
+        writeln(this.text);
+
+        if(this.text == "" || this.text is null)
+            return valid;
+        else
+        {
+            valid = true;
+            return valid;
+        }
+    }
+
+    //Event handler for Submit button press
     bool press(Event e, Widget w)
     {
-        getEntry();
-        frame.destroy();
-        return true;
+        bool valid = getEntry();
+
+        if(valid)
+        {
+            frame.destroy();
+            return true;
+        }
+        else
+        {
+            auto d = makeErrorDialog();
+            return false;
+        }
+    }
+
+    //Creates the Error message dialog for invalid name cause messagedialog is fucked
+    Dialog makeErrorDialog()
+    {
+        import gtk.Dialog;
+
+        //Let's manually make a fucking message dialog! :D
     }
 
 private:
@@ -133,6 +169,9 @@ private:
     Box box;
 }
 
+
+
+/* FOR TESTING PURPOSES */
 void main(string[] args)
 {
     import std.stdio;

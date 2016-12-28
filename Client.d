@@ -16,6 +16,9 @@ public:
 private:
     ushort port = 9000;
     string ip = "127.0.0.1";
+
+    string username;
+
     Socket client;
     ClientGUI g;
     NameWindow nw;
