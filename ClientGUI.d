@@ -149,16 +149,30 @@ public:
         else
         {
             auto d = makeErrorDialog();
+            d.run();
+            d.destroy();
             return false;
         }
     }
 
+    import gtk.Dialog;
     //Creates the Error message dialog for invalid name cause messagedialog is fucked
     Dialog makeErrorDialog()
     {
-        import gtk.Dialog;
+        /* It just loves to be awkward.. */
+        string[] buttonName;
+        buttonName~="OK";
+        GtkResponseType[] responseID;
+        responseID~=GtkResponseType.OK;
 
-        //Let's manually make a fucking message dialog! :D
+        //Creates the dialog and adds the relevant parts
+        auto dialog = new Dialog("Enter Valid Name", null, GtkDialogFlags.MODAL, buttonName, responseID);
+        dialog.setDefaultSize(300,100);
+        auto content = dialog.getContentArea();
+        content.add(new Label("You must enter a valid name"));
+        dialog.showAll();
+
+        return dialog;
     }
 
 private:
