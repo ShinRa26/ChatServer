@@ -124,8 +124,8 @@ public:
         bool valid = false;
         this.text = e.getText();
 
-        import std.stdio;
-        writeln(this.text);
+        //import std.stdio;
+        //writeln(this.text);
 
         if(this.text == "" || this.text is null)
             return valid;
@@ -185,7 +185,7 @@ private:
 
 
 
-/* FOR TESTING PURPOSES */
+/* FOR TESTING PURPOSES 
 void main(string[] args)
 {
     import std.stdio;
@@ -194,3 +194,4 @@ void main(string[] args)
     //auto c = new ClientGUI();
     Main.run();
 }
+*/
