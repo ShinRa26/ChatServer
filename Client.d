@@ -11,6 +11,7 @@ public:
     {
         this.nw = new NameWindow();
         this.self = new Socket(GSocketFamily.IPV4, GSocketType.STREAM, GSocketProtocol.TCP);
+        setUsername();
     }
 
     void setUsername()
@@ -34,11 +35,19 @@ void main(string[] args)
     Main.init(args);
     auto clientHolder = new Client();
     auto client = clientHolder.self;
+
+    while(clientHolder.username is null || clientHolder.username == "")
+        Thread.sleep(dur!("msecs")(1000));
     
     try
     {
         auto addr = new InetSocketAddress(clientHolder.ip, clientHolder.port);
-        client.connect(addr, null);
+        bool accepted = client.connect(addr, null);
+
+        if(accepted)
+        {
+            auto gui = new ClientGUI();
+        }
     }
     catch(Exception)
     {
