@@ -1,7 +1,7 @@
 module Client;
 
 import std.string, core.thread, std.concurrency, std.stdio;
-import gio.Socket, gio.InetSocketAddress, gio.InetAddress;
+import gio.socket, gio.InetSocketAddress, gio.InetAddress;
 import ClientGUI, gtk.Main;
 
 class Client
@@ -34,12 +34,16 @@ void main(string[] args)
     Main.init(args);
     auto clientHolder = new Client();
     auto client = clientHolder.self;
-
-    auto ip = new InetAddress(clientHolder.ip);
-    auto addr = new InetSocketAddress(ip, clientHolder.port);
-    writeln(addr);
     
-    //SERIOUSLY, JUST MAKE THE FUCKING ADDRESS, YOU DICK!
+    try
+    {
+        auto addr = new InetSocketAddress(clientHolder.ip, clientHolder.port);
+        client.connect(addr, null);
+    }
+    catch(Exception)
+    {
+        writeln("Error!");
+    }
 
     Main.run();
 }
