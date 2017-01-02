@@ -1,58 +1,47 @@
 module Client;
 
 import std.string, core.thread, std.concurrency, std.stdio;
-import gio.socket, gio.InetSocketAddress, gio.InetAddress;
+import core.sync.mutex, core.sync.condition;
+import gio.socket, gio.InetSocketAddress;
 import ClientGUI, gtk.Main;
+
+static string ip = "127.0.0.1";
+static ushort port = 9000;
+Socket client;
+string name;
 
 class Client
 {
 public:
+    string name = "Not assigned";
+    string ip = "127.0.0.1";
+    ushort port = 9000;
+    Socket self;
+    InetSocketAddress addr;
+
     this()
     {
-        this.nw = new NameWindow();
         this.self = new Socket(GSocketFamily.IPV4, GSocketType.STREAM, GSocketProtocol.TCP);
-        setUsername();
+        this.addr = new InetSocketAddress(this.ip, this.port);
     }
 
-    void setUsername()
-    {
-        this.username = this.nw.text;
-    }
-
-    //Public Variables
-    ushort port = 9000;
-    string ip = "127.0.0.1";
-    string username;
-    Socket self;
-
-private:
-    NameWindow nw;
+    ~this(){}
 }
-
 
 void main(string[] args)
 {
     Main.init(args);
-    auto clientHolder = new Client();
-    auto client = clientHolder.self;
+    auto client = new Client();
+    auto nw = new NameWindow();
+    Main.run();
 
-    while(clientHolder.username is null || clientHolder.username == "")
-        Thread.sleep(dur!("msecs")(1000));
-    
+    client.name = nw.text;
+    destroy(nw); //Kills the name window as it is no longer needed.
+
     try
     {
-        auto addr = new InetSocketAddress(clientHolder.ip, clientHolder.port);
-        bool accepted = client.connect(addr, null);
-
-        if(accepted)
-        {
-            auto gui = new ClientGUI();
-        }
+        //TODO Enter client code.
+        //TODO Implement an update function into the ClientGUI.d file.
     }
-    catch(Exception)
-    {
-        writeln("Error!");
-    }
-
-    Main.run();
+    catch(Exception){writefln("Unable to connect to %s:%d - Server Offline.", client.ip, c.port); return;}
 }

@@ -1,6 +1,7 @@
 module ClientGUI;
 
 import std.string;
+import Client;
 import gtk.Main, gtk.MainWindow, gtk.TextView, gtk.ScrolledWindow, gtk.Box;
 import gdk.Event, gdk.RGBA, gdk.Color, gtk.Widget, gtk.TextBuffer;
 
@@ -104,14 +105,14 @@ public:
 
         l = new Label("Enter Chat Name:");
         
-        e = new Entry();
+        en = new Entry();
 
         b = new Button("Submit");
         b.addOnButtonRelease(&press);
 
         box = new Box(Orientation.VERTICAL, 10);
         box.packStart(l, false, false, 5);
-        box.packStart(e, false, false, 5);
+        box.packStart(en, false, false, 5);
         box.packStart(b, false, false, 5);
 
         frame.add(box);
@@ -122,16 +123,14 @@ public:
     bool getEntry()
     { 
         bool valid = false;
-        this.text = e.getText();
-
-        //import std.stdio;
-        //writeln(this.text);
+        this.text = en.getText();
 
         if(this.text == "" || this.text is null)
             return valid;
         else
         {
             valid = true;
+            Main.quit();
             return valid;
         }
     }
@@ -178,14 +177,14 @@ public:
 private:
     Window frame;
     Label l;
-    Entry e;
+    Entry en;
     Button b;
     Box box;
 }
 
 
 
-/* FOR TESTING PURPOSES 
+/*
 void main(string[] args)
 {
     import std.stdio;
@@ -195,3 +194,4 @@ void main(string[] args)
     Main.run();
 }
 */
+
