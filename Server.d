@@ -49,13 +49,12 @@ private:
         client.receive(nameBuffer);
         Thread.name = processBuffer(nameBuffer);
 
-        //writefln("Echo length: %d", eh.clients.length);
-
         //Acknowledges the connection and takes name;
         writefln("%s has joined the server.", Thread.name);
 
         //Send welcome message!
-        client.send("Welcome to the Server!\n");
+        string welcome = "Welcome to the server!";
+        client.send(welcome);
 
         //Main loop for receiving messages
         while(true)

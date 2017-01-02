@@ -1,6 +1,6 @@
 module Client;
 
-import std.string, core.thread, std.concurrency, std.stdio;
+import std.string, core.thread, std.concurrency, std.stdio, std.conv;
 import core.sync.mutex, core.sync.condition;
 import gio.socket, gio.InetSocketAddress;
 import ClientGUI, gtk.Main;
@@ -28,20 +28,66 @@ public:
     ~this(){}
 }
 
+class ClientListener : Thread
+{
+public:
+    this(Socket client, ClientGUI gui)
+    {
+        super(&run);
+        this.client = client;
+        this.gui = gui;
+    }
+    ~this(){}
+
+private:
+    Socket client;
+    ClientGUI gui;
+    string buffer = "";
+
+    void run()
+    {
+        while(true)
+        {
+            client.receive(buffer, null);
+            if(buffer.length == 0)
+                continue;
+            else
+                writeln(buffer);
+            gui.update("TITTIES");
+        }
+    }
+}
+
 void main(string[] args)
 {
+    uint bufSize = 2048;
+
     Main.init(args);
-    auto client = new Client();
+    auto clientHolder = new Client();
+    auto client = clientHolder.self;
     auto nw = new NameWindow();
     Main.run();
 
-    client.name = nw.text;
+    clientHolder.name = nw.text;
     destroy(nw); //Kills the name window as it is no longer needed.
 
     try
     {
-        //TODO Enter client code.
-        //TODO Implement an update function into the ClientGUI.d file.
+        string buffer = new string(bufSize);
+
+        client.connect(clientHolder.addr, null);
+        client.send(clientHolder.name, null);
+
+        auto gui = new ClientGUI(clientHolder);
+
+        auto recv = client.receive(buffer, null);
+        writefln("Received: %s", recv);
+        gui.update(buffer);
+        
+        auto listener = new ClientListener(client, gui);
+        listener.start();
+
+        Main.run();
     }
-    catch(Exception){writefln("Unable to connect to %s:%d - Server Offline.", client.ip, c.port); return;}
+    catch(Exception){writeln("Unable to connect to DChat Service: Server offline."); return;}
 }

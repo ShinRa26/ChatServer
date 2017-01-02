@@ -4,13 +4,16 @@ import std.string;
 import Client;
 import gtk.Main, gtk.MainWindow, gtk.TextView, gtk.ScrolledWindow, gtk.Box;
 import gdk.Event, gdk.RGBA, gdk.Color, gtk.Widget, gtk.TextBuffer;
+import gio.socket;
 
 /* Main class for displaying the chat program gui */
 class ClientGUI
 {
 public:
-    this()
+    this(Client client)
     {
+        this.client = client;
+
         win = new MainWindow("DChat");
         win.setDefaultSize(800,400);
 
@@ -28,12 +31,23 @@ public:
     }
     ~this(){}
 
+    import gtk.TextIter;
+    void update(string buffer)
+    {
+        TextIter end;
+        auto buff = chatDisplay.getBuffer();
+        buff.getEndIter(end);
+
+        buff.insert(end, buffer);
+    }
+
 
 private:
     MainWindow win;
     TextView chatDisplay, chatEntry;
     Box box;
     ScrolledWindow scroll, scroll2;
+    Client client;
 
     //Helper to set up the display
     void setupChatRoomWidgets()
@@ -43,7 +57,7 @@ private:
         chatDisplay.overrideBackgroundColor(GtkStateFlags.NORMAL, new RGBA(0,0,0,1));
         chatDisplay.overrideColor(GtkStateFlags.NORMAL, new RGBA(65535,65535,65535,1));
 
-        chatEntry = new ChatTextBox(chatDisplay);
+        chatEntry = new ChatTextBox(chatDisplay, client);
     }
 }
 
@@ -52,7 +66,7 @@ class ChatTextBox : TextView
 {
     import gtk.TextIter;
 public:
-    this(TextView chatDisplay)
+    this(TextView chatDisplay, Client client)
     {
         super();
         this.overrideBackgroundColor(GtkStateFlags.NORMAL, new RGBA(0,0,0,1));
@@ -60,11 +74,13 @@ public:
         addOnKeyPress(&enter);
 
         this.chatDisplay = chatDisplay;
+        this.client = client;
     }
     ~this(){}
 
 private:
     TextView chatDisplay;
+    Client client;
 
     //Event handler for textbox
     bool enter(Event key, Widget widget)
@@ -79,7 +95,9 @@ private:
 
         if(val == 65293)
         {
-            chatDisplay.appendText(buff.getText() ~ "\n");
+            client.self.send(buff.getText() ~ "\n", null);
+            string cName = format("[%s]: ", client.name);
+            chatDisplay.appendText(cName ~ buff.getText() ~ "\n");
             buff.delet(start, end);
         }
         else
