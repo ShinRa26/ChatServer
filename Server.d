@@ -51,9 +51,11 @@ private:
 
         //Acknowledges the connection and takes name;
         writefln("%s has joined the server.", Thread.name);
+        auto joined = format("%s has joined the server.", Thread.name);
+        eh.echo("", joined);
 
         //Send welcome message!
-        string welcome = "Welcome to the server!";
+        string welcome = "Welcome to the server!\n";
         client.send(welcome);
 
         //Main loop for receiving messages
@@ -65,7 +67,7 @@ private:
             if(recv == -1 || recv == 0)
             {
                 auto msg = format("%s has left the server.", Thread.name);
-                eh.echo(Thread.name, msg);
+                eh.echo("", msg);
                 writeln(msg);
                 break;
             }
@@ -140,8 +142,16 @@ public:
                 continue;
             else
             {
-                auto s = format("[%s]: %s", name, msg);
-                c.send(s);
+                if(name == "")
+                {
+                    auto s = format("\n%s\n", msg);
+                    c.send(s);
+                }
+                else
+                {
+                    auto s = format("[%s]: %s", name, msg);
+                    c.send(s);
+                }
             }
         }
     }

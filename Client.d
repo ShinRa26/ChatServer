@@ -59,25 +59,28 @@ private:
             if(buffer.length == 0)
                 continue;
 
-            foreach(c; buffer)
-            {
-                if(c !is 0)
-                    pos++;
-                else if(c == 0)
-                {
-                    pos++;
-                    c = 10;
-                    break;
-                }
-            }
-
-            auto newBuffer = buffer[0..pos];
-            writefln("New Buffer Size: %d", newBuffer.length);
-
+            auto newBuffer = processBuffer(buffer);
             gui.update(newBuffer);
+            clearBuffer(newBuffer);
         }
     }
 }
+
+static char[] processBuffer(char[] buffer)
+{
+    ushort pos = 0;
+
+    foreach(c; buffer)
+    {
+        if(c != 0)
+            pos++;
+    }
+
+    auto newBuffer = buffer[0..pos];
+    return newBuffer;
+}
+
+static char[] clearBuffer(char[] buffer){buffer[0..$] = 0; return buffer;}
 
 void main(string[] args)
 {
@@ -95,6 +98,7 @@ void main(string[] args)
     try
     {
         auto buffer = new char[bufSize];
+        buffer = buffer[0..buffer.length] = 0;
 
         client.connect(clientHolder.addr, null);
         client.send(clientHolder.name, null);
@@ -112,9 +116,9 @@ void main(string[] args)
         auto listener = new ClientListener(client, gui);
         listener.start();
 
-        writefln("Received %s bytes as: %s", recv, buffer);
-        gui.update(buffer);
-    
+        auto newBuffer = processBuffer(buffer);
+
+        gui.update(newBuffer);
 
         Main.run();
     }

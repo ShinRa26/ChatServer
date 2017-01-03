@@ -31,7 +31,7 @@ public:
     }
     ~this(){}
 
-    import gtk.TextIter;
+    import gtk.TextIter, glib.iconv;
     void update(char[] buffer)
     {
         TextIter end;
@@ -39,6 +39,11 @@ public:
         buff.getEndIter(end);
 
         auto msg = to!(string)(buffer);
+        msg~='\n';
+        string newMsg;
+
+        auto conv = open("UTF8", "ASCII");
+        iconv(conv, msg, newMsg);
 
         buff.insert(end, msg);
     }
@@ -97,7 +102,8 @@ private:
 
         if(val == 65293)
         {
-            client.self.send(buff.getText() ~ "\n", null); 
+            auto msg = buff.getText();
+            client.self.send(msg, null); 
             //string cName = format("[%s]: ", client.name);
             //chatDisplay.appendText(cName ~ buff.getText() ~ "\n");
             buff.delet(start, end);
