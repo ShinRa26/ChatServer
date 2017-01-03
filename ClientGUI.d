@@ -1,6 +1,6 @@
 module ClientGUI;
 
-import std.string;
+import std.string, std.conv;
 import Client;
 import gtk.Main, gtk.MainWindow, gtk.TextView, gtk.ScrolledWindow, gtk.Box;
 import gdk.Event, gdk.RGBA, gdk.Color, gtk.Widget, gtk.TextBuffer;
@@ -32,13 +32,15 @@ public:
     ~this(){}
 
     import gtk.TextIter;
-    void update(string buffer)
+    void update(char[] buffer)
     {
         TextIter end;
         auto buff = chatDisplay.getBuffer();
         buff.getEndIter(end);
 
-        buff.insert(end, buffer);
+        auto msg = to!(string)(buffer);
+
+        buff.insert(end, msg);
     }
 
 

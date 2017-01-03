@@ -44,21 +44,37 @@ public:
 private:
     Socket client;
     ClientGUI gui;
-    string buffer;
+    char[] buffer;
     uint bufSize;
 
     void run()
     {
-        buffer = new string(bufSize);
+        buffer = new char[bufSize];
+        buffer[0..buffer.length] = 0;
         while(true)
         {
+            ushort pos = 0;
             client.receive(buffer, null);
+            
             if(buffer.length == 0)
                 continue;
-            else
-                writeln("Buffer length: %d",buffer.length);
 
-            gui.update("TITTIES\n");
+            foreach(c; buffer)
+            {
+                if(c !is 0)
+                    pos++;
+                else if(c == 0)
+                {
+                    pos++;
+                    c = 10;
+                    break;
+                }
+            }
+
+            auto newBuffer = buffer[0..pos];
+            writefln("New Buffer Size: %d", newBuffer.length);
+
+            gui.update(newBuffer);
         }
     }
 }
@@ -78,7 +94,7 @@ void main(string[] args)
 
     try
     {
-        string buffer = new string(bufSize);
+        auto buffer = new char[bufSize];
 
         client.connect(clientHolder.addr, null);
         client.send(clientHolder.name, null);
@@ -92,11 +108,13 @@ void main(string[] args)
             writefln("Allocated buffer is null or did not initialise properly.");
             return;
         }
-        writefln("Received %s bytes as: %s", recv, buffer);
-        gui.update(buffer);
-        
+
         auto listener = new ClientListener(client, gui);
         listener.start();
+
+        writefln("Received %s bytes as: %s", recv, buffer);
+        gui.update(buffer);
+    
 
         Main.run();
     }
