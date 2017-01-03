@@ -55,7 +55,7 @@ private:
         eh.echo("", joined);
 
         //Send welcome message!
-        string welcome = "Welcome to the server!\n";
+        string welcome = "Welcome to the server!";
         client.send(welcome);
 
         //Main loop for receiving messages
