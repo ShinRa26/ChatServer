@@ -3,6 +3,7 @@ module Client;
 import std.string, core.thread, std.concurrency, std.stdio, std.conv;
 import core.sync.mutex, core.sync.condition;
 import gio.socket, gio.InetSocketAddress;
+
 import ClientGUI, gtk.Main;
 
 static string ip = "127.0.0.1";
@@ -36,31 +37,35 @@ public:
         super(&run);
         this.client = client;
         this.gui = gui;
+        this.bufSize = 512;
     }
     ~this(){}
 
 private:
     Socket client;
     ClientGUI gui;
-    string buffer = "";
+    string buffer;
+    uint bufSize;
 
     void run()
     {
+        buffer = new string(bufSize);
         while(true)
         {
             client.receive(buffer, null);
             if(buffer.length == 0)
                 continue;
             else
-                writeln(buffer);
-            gui.update("TITTIES");
+                writeln("Buffer length: %d",buffer.length);
+
+            gui.update("TITTIES\n");
         }
     }
 }
 
 void main(string[] args)
 {
-    uint bufSize = 2048;
+    uint bufSize = 512;
 
     Main.init(args);
     auto clientHolder = new Client();
@@ -81,7 +86,13 @@ void main(string[] args)
         auto gui = new ClientGUI(clientHolder);
 
         auto recv = client.receive(buffer, null);
-        writefln("Received: %s", recv);
+
+        if(recv == -1)
+        {
+            writefln("Allocated buffer is null or did not initialise properly.");
+            return;
+        }
+        writefln("Received %s bytes as: %s", recv, buffer);
         gui.update(buffer);
         
         auto listener = new ClientListener(client, gui);

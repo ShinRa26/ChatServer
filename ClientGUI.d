@@ -95,9 +95,9 @@ private:
 
         if(val == 65293)
         {
-            client.self.send(buff.getText() ~ "\n", null);
-            string cName = format("[%s]: ", client.name);
-            chatDisplay.appendText(cName ~ buff.getText() ~ "\n");
+            client.self.send(buff.getText() ~ "\n", null); 
+            //string cName = format("[%s]: ", client.name);
+            //chatDisplay.appendText(cName ~ buff.getText() ~ "\n");
             buff.delet(start, end);
         }
         else
