@@ -4,7 +4,7 @@ import std.string, std.conv;
 import Client;
 import gtk.Main, gtk.MainWindow, gtk.TextView, gtk.ScrolledWindow, gtk.Box;
 import gdk.Event, gdk.RGBA, gdk.Color, gtk.Widget, gtk.TextBuffer;
-import gio.socket;
+import gio.Socket;
 
 /* Main class for displaying the chat program gui */
 class ClientGUI
@@ -31,7 +31,7 @@ public:
     }
     ~this(){}
 
-    import gtk.TextIter, glib.iconv;
+    import gtk.TextIter, glib.IConv;
     void update(char[] buffer)
     {
         TextIter end;

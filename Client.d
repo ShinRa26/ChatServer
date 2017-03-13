@@ -2,7 +2,7 @@ module Client;
 
 import std.string, core.thread, std.concurrency, std.stdio, std.conv;
 import core.sync.mutex, core.sync.condition;
-import gio.socket, gio.InetSocketAddress;
+import gio.Socket, gio.InetSocketAddress;
 
 import ClientGUI, gtk.Main;
 

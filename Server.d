@@ -52,7 +52,7 @@ private:
         //Acknowledges the connection and takes name;
         writefln("%s has joined the server.", Thread.name);
         auto joined = format("%s has joined the server.", Thread.name);
-        eh.echo("", joined);
+        eh.echo("", joined, null);
 
         //Send welcome message!
         string welcome = "Welcome to the server!";
@@ -67,7 +67,7 @@ private:
             if(recv == -1 || recv == 0)
             {
                 auto msg = format("%s has left the server.", Thread.name);
-                eh.echo("", msg);
+                eh.echo("", msg, null);
                 writeln(msg);
                 break;
             }
@@ -75,7 +75,7 @@ private:
             {
                 auto msg = processBuffer(buffer);           
                 writefln("[%s]: %s", Thread.name, msg);
-                eh.echo(Thread.name, msg);
+                eh.echo(Thread.name, msg, client);
                 clearBuffer(buffer);
             }
         }
@@ -134,11 +134,13 @@ public:
     this(){}
     ~this(){}
 
-    void echo(string name, string msg)
+    void echo(string name, string msg, Socket sender)
     {
         foreach(c; clients)
         {
             if(c is null)
+                continue;
+            else if(c == sender)
                 continue;
             else
             {
